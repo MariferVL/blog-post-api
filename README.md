@@ -45,11 +45,11 @@ This project provides a simple API for creating, reading, updating, and deleting
 
 1. **Clone the repository:**
    ```bash
-   git clone <https://github.com/MariferVL/blog-post-api.git>
+   git clone https://github.com/MariferVL/blog-post-api.git
    ```
 2. **Go to the project directory:**
    ```bash
-   cd blog-posts-api-medium
+   cd blog-post-api
    ```
 3. **Install all required packages:**
    ```bash
