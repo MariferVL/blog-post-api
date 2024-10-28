@@ -1,107 +1,183 @@
- 
-Blog Posts API
-This project is a simple model for beginners in Node.js and API creation. It offers basic CRUD operations for managing blog posts, serving as a perfect starting point to learn how to build and test a RESTful API using Express, Jest, and Supertest.
 
-Table of Contents
-Description
+# Blog Posts API 
 
-Installation
+Welcome to **Blog Posts API**! This project is a simple API for managing blog posts, similar to a very basic Medium platform. It’s built using Node.js, Express, and includes tests with Jest and Supertest. If you're new to building APIs, this is a great place to start!
 
-Usage
+## Table of Contents
+- [Overview](#overview)
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Getting Started](#getting-started)
+- [File Structure](#file-structure)
+- [API Endpoints](#api-endpoints)
+- [Testing](#testing)
+- [License](#license)
 
-API Endpoints
+## Overview
+This project provides a simple API for creating, reading, updating, and deleting (CRUD) blog posts. By running this code, you’ll set up an API server that lets you:
+- View a list of all posts
+- Add new posts
+- Retrieve a single post by ID
+- Update posts by ID
+- Delete posts by ID
 
-Testing
+## Features
+- Basic CRUD operations for posts
+- Stores data temporarily in memory (no database required)
+- Uses JSON format for data handling
+- Fully tested with Jest and Supertest
 
-Contributing
+## Technologies Used
+- [Node.js](https://nodejs.org/) - JavaScript runtime environment
+- [Express](https://expressjs.com/) - Web framework for building APIs
+- [CORS](https://www.npmjs.com/package/cors) - Middleware to handle Cross-Origin Resource Sharing
+- [Body-Parser](https://www.npmjs.com/package/body-parser) - Middleware to parse incoming JSON request bodies
+- [Jest](https://jestjs.io/) - Testing framework
+- [Supertest](https://www.npmjs.com/package/supertest) - Tool for HTTP assertions in tests
 
-License
+## Getting Started
 
-Description
-This project serves as a simple model for those taking their first steps in Node.js and creating a RESTful API. It provides a straightforward implementation to manage blog posts, making it an excellent starting point for beginners. The project includes endpoints for creating, reading, updating, and deleting posts, along with examples of basic testing using Jest and Supertest.
+### Prerequisites
+- Have [Node.js](https://nodejs.org/) installed
+- Basic familiarity with JavaScript
 
-Installation
-Clone the repository:
+### Installation
 
-bash
+1. **Clone the repository:**
+   ```bash
+   git clone <https://github.com/MariferVL/blog-post-api.git>
+   ```
+2. **Go to the project directory:**
+   ```bash
+   cd blog-posts-api-medium
+   ```
+3. **Install all required packages:**
+   ```bash
+   npm install
+   ```
 
-Copiar
-git clone https://github.com/yourusername/blog-posts-api.git
-cd blog-posts-api
-Install the dependencies:
+### Running the Server
+To start the API server, open your terminal in the project directory and run:
+```bash
+node server.js
+```
+The server should start at `http://localhost:3000`, and you'll see a message confirming that it’s running.
 
-bash
+## File Structure
+Here’s a quick look at the files included in this project:
 
-Copiar
-npm install
-Usage
-Start the server:
+```
+├── posts/
+│   └── posts.js            # Routes for handling blog posts
+├── tests/
+│   └── server.test.js      # Test cases for our API
+├── server.js               # Main server file
+└── package.json            # Project configuration and dependencies
+```
 
-bash
+### Explanation of Key Files
+- **server.js**: This file sets up the Express server, connects middleware (CORS, body-parser), and loads our routes for handling blog posts.
+- **posts/posts.js**: This file contains all the routes for our blog posts. It includes routes to get, add, update, and delete posts.
+- **tests/server.test.js**: This file contains tests to check that our API is working correctly. It uses Jest and Supertest to make sure each endpoint does what it’s supposed to.
 
-Copiar
-npm start
-The server will run on http://localhost:3000.
+## API Endpoints
 
-API Endpoints: The API provides the following endpoints to manage blog posts:
+Each endpoint lets us interact with our blog posts in different ways.
 
-GET /api/posts: Retrieve all posts.
+### 1. Get All Posts
+- **URL**: `/api/posts`
+- **Method**: `GET`
+- **Description**: Returns a list of all posts.
 
-POST /api/posts: Create a new post.
+### 2. Get a Single Post
+- **URL**: `/api/posts/:id`
+- **Method**: `GET`
+- **Description**: Returns a single post by its ID.
 
-GET /api/posts/:id: Retrieve a specific post by ID.
+### 3. Create a New Post
+- **URL**: `/api/posts`
+- **Method**: `POST`
+- **Description**: Creates a new post.
+- **Request Body**:
+  ```json
+  {
+    "title": "Post Title",
+    "content": "Post Content"
+  }
+  ```
 
-PUT /api/posts/:id: Update a specific post by ID.
+### 4. Update a Post
+- **URL**: `/api/posts/:id`
+- **Method**: `PUT`
+- **Description**: Updates an existing post.
+- **Request Body**:
+  ```json
+  {
+    "title": "Updated Title",
+    "content": "Updated Content"
+  }
+  ```
 
-DELETE /api/posts/:id: Delete a specific post by ID.
+### 5. Delete a Post
+- **URL**: `/api/posts/:id`
+- **Method**: `DELETE`
+- **Description**: Deletes a post by its ID.
 
-API Endpoints
-GET /api/posts
+## Testing
 
-Retrieve all blog posts.
+Testing is an important step to make sure everything in your API works as expected. This project includes tests that cover the functionality of each endpoint.
 
-Response: Array of posts.
+1. **Create the `tests/server.test.js` file** with the following code:
 
-POST /api/posts
+    ```javascript
+    const request = require('supertest');
+    const express = require('express');
+    const postsRoutes = require('../posts/posts');
 
-Create a new post.
+    const app = express();
+    app.use(express.json());
+    app.use('/api/posts', postsRoutes);
 
-Request Body: { "title": "Post Title", "content": "Post Content" }
+    describe('Posts API', () => {
+        it('should get all posts', async () => {
+            const res = await request(app).get('/api/posts');
+            expect(res.statusCode).toEqual(200);
+            expect(Array.isArray(res.body)).toBe(true);
+        });
 
-Response: Created post with status 201.
+        it('should create a new post', async () => {
+            const newPost = { title: 'Test Post', content: 'Test Content' };
+            const res = await request(app).post('/api/posts').send(newPost);
+            expect(res.statusCode).toEqual(201);
+            expect(res.body.title).toBe('Test Post');
+        });
 
-GET /api/posts/:id
+        it('should get a post by ID', async () => {
+            const res = await request(app).get('/api/posts/1');
+            expect(res.statusCode).toEqual(200);
+            expect(res.body).toHaveProperty('id', 1);
+        });
 
-Retrieve a specific post by ID.
+        it('should update a post by ID', async () => {
+            const updatedPost = { title: 'Updated Title', content: 'Updated Content' };
+            const res = await request(app).put('/api/posts/1').send(updatedPost);
+            expect(res.statusCode).toEqual(200);
+            expect(res.body.title).toBe('Updated Title');
+        });
 
-Response: Post object or 404 if not found.
+        it('should delete a post by ID', async () => {
+            const res = await request(app).delete('/api/posts/1');
+            expect(res.statusCode).toEqual(204);
+        });
+    });
+    ```
 
-PUT /api/posts/:id
+2. **Run Tests**:
+   To execute the tests, open your terminal and run:
+   ```bash
+   npm test
+   ```
+   The test results will show whether each endpoint works as expected.
 
-Update a specific post by ID.
-
-Request Body: { "title": "Updated Title", "content": "Updated Content" }
-
-Response: Updated post or 404 if not found.
-
-DELETE /api/posts/:id
-
-Delete a specific post by ID.
-
-Response: Status 204 or 404 if not found.
-
-Testing
-To run the tests, use the following command:
-
-bash
-
-Copiar
-npm test
-This will run the tests using Jest and Supertest to ensure the API works correctly.
-
-Contributing
-If you would like to contribute to this project, please fork the repository and submit a pull request with your changes.
-
-License
+## License
 This project is licensed under the ISC License.
-
